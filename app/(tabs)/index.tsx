@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -10,7 +10,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { pontosService, type Ponto } from '../../services/pontosService';
 
 export default function HomeScreen() {
@@ -20,16 +20,18 @@ export default function HomeScreen() {
   const [pontos, setPontos] = useState<Ponto[]>([]);
   const [filtro, setFiltro] = useState('');
   const [pagina, setPagina] = useState(0);
-  const [ultimaPagina, setUltimaPagina] = useState(false);
+  const [ultimaPagina, setUltimaPagina] = useState(true);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
 
+  const requisicaoAtual = useRef(0);
+
   const carregarPontos = useCallback(async (
-    numeroPagina = 0,
-    novoFiltro = filtro,
+    numeroPagina: number,
+    novoFiltro: string,
     substituir = false
   ) => {
-    if (carregando) return;
+    const requisicao = ++requisicaoAtual.current;
 
     try {
       setCarregando(true);
@@ -39,22 +41,27 @@ export default function HomeScreen() {
         ? await pontosService.pesquisar(novoFiltro.trim(), numeroPagina, 10)
         : await pontosService.listar(numeroPagina, 10);
 
+      if (requisicao !== requisicaoAtual.current) return;
+
       setPontos(atual =>
         substituir ? resultado.content : [...atual, ...resultado.content]
       );
 
-      setPagina(resultado.number);
-      setUltimaPagina(resultado.last);
+      setPagina(resultado.page.number);
+      setUltimaPagina(resultado.page.number + 1 >= resultado.page.totalPages);
     } catch (error) {
+      if (requisicao !== requisicaoAtual.current) return;
       setErro(error instanceof Error ? error.message : 'Não foi possível carregar os pontos.');
     } finally {
-      setCarregando(false);
+      if (requisicao === requisicaoAtual.current) setCarregando(false);
     }
-  }, [filtro, carregando]);
+  }, []);
 
-  useEffect(() => {
-    carregarPontos(0, filtro, true);
-  }, [filtro]);
+  useFocusEffect(useCallback(() => {
+    setUltimaPagina(true);
+    void carregarPontos(0, filtro, true);
+    return () => { requisicaoAtual.current += 1; };
+  }, [carregarPontos, filtro]));
 
   const pesquisar = (texto: string) => {
     setFiltro(texto);
@@ -100,12 +107,12 @@ export default function HomeScreen() {
           onEndReached={carregarMais}
           onEndReachedThreshold={0.4}
           ListEmptyComponent={
-            carregando ? null : (
+            carregando ? undefined : (
               <Text style={styles.vazio}>Nenhum ponto encontrado.</Text>
             )
           }
           ListFooterComponent={
-            carregando ? <ActivityIndicator size="large" color="#222" /> : null
+            carregando ? <ActivityIndicator size="large" color="#222" /> : undefined
           }
           renderItem={({ item }) => (
             <Pressable
