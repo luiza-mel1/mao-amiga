@@ -1,9 +1,9 @@
-﻿import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator, Alert, Pressable, StyleSheet, Text, View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { pontosService, type Ponto } from '../services/pontosService';
 import { favoritosService } from '../services/favoritosService';
 
@@ -33,9 +33,9 @@ export default function ModalScreen() {
     }
   }, [id]);
 
-  useEffect(() => {
-    carregarPonto();
-  }, [carregarPonto]);
+  useFocusEffect(useCallback(() => {
+    void carregarPonto();
+  }, [carregarPonto]));
 
   async function alternarFavorito() {
     try {
