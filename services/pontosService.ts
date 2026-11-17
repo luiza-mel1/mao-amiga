@@ -1,4 +1,4 @@
-﻿import { apiFetch } from './api';
+import { apiFetch } from './api';
 
 export interface Ponto {
   id: string;
@@ -11,18 +11,19 @@ export interface Ponto {
 
 export interface Pagina<T> {
   content: T[];
-  totalElements: number;
-  totalPages: number;
-  number: number;
-  size: number;
-  last: boolean;
+  page: {
+    totalElements: number;
+    totalPages: number;
+    number: number;
+    size: number;
+  };
 }
 
 export type PontoInput = Omit<Ponto, 'id'>;
 
 export const pontosService = {
   listar: (page = 0, size = 10) =>
-    apiFetch<Pagina<Ponto>>(`/pontos?page=${page}&size=${size}&sort=nome,asc`),
+    apiFetch<Pagina<Ponto>>(`/pontos/filtro?page=${page}&size=${size}&sort=nome,asc`),
 
   pesquisar: (filtro: string, page = 0, size = 10) =>
     apiFetch<Pagina<Ponto>>(
