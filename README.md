@@ -63,30 +63,21 @@ Veja os exemplos de requisições e a configuração do banco no [README da API]
 
 ## Evidências do Swagger
 
-As capturas do Swagger com os retornos HTTP 200, 400 e 404 estão pendentes. Para gerar as evidências, execute os casos abaixo com a API ligada.
-
-- **200:** `GET /api/v1/pontos`
-- **400:** `POST /api/v1/pontos` com corpo `{}`
-- **404:** `GET /api/v1/pontos/{id}` com um UUID inexistente, como `00000000-0000-0000-0000-000000000000`
+- [N2-1 — sete prints do CRUD de pontos](https://github.com/luiza-mel1/mao-amiga/issues/1#issuecomment-6959307999), com os retornos HTTP 200, 201, 204, 400 e 404.
+- [N2-2 — três consultas com paginação, filtro e ordenação](https://github.com/luiza-mel1/mao-amiga/issues/2#issuecomment-6959483870), com as respostas completas da API anexadas.
 
 ## Acompanhamento da N2
 
-| Item | Implementação | Conferência pendente |
-| --- | --- | --- |
-| [N2-1](https://github.com/luiza-mel1/mao-amiga/issues/1) | CRUD de pontos na API | Capturas do Swagger de cada operação, incluindo 400 e 404 |
-| N2-2 | Busca paginada de pontos por nome ou bairro, com ordenação | Registro das três chamadas e respostas abaixo |
-| N2-3 | Lista, busca e detalhe de pontos no app | Demonstração com a API em execução |
-| N2-4 | Cadastro, edição e exclusão de pontos no app | Demonstração com a API em execução |
-| N2-5 | CRUD de doações na API | Validação de requisições e retornos |
-| N2-6 | Cadastro e histórico de doações no app | Conferir o novo registro no histórico durante a demonstração |
-| N2-7 | Edição e exclusão de doação pelo app | Conferir a atualização do histórico após cada operação |
-| N2-8 | Favoritos no app, instruções de execução e roteiro | Confirmar a persistência dos favoritos e apresentar o roteiro |
-
-Para demonstrar a paginação no Swagger, execute três chamadas a `GET /api/v1/pontos/filtro` e compare `content` e `page` nas respostas.
-
-1. `?page=0&size=10&sort=nome,asc`
-2. `?page=1&size=10&sort=nome,asc`
-3. `?filtro=Bueno&page=0&size=5&sort=bairro,desc`
+| Item | Evidência ou conferência |
+| --- | --- |
+| N2-1 | Prints do CRUD de pontos publicados no link acima. |
+| N2-2 | Consultas e respostas de paginação publicadas no link acima. |
+| N2-3 | Demonstrar lista, busca e detalhe de pontos com a API ligada. |
+| N2-4 | Demonstrar cadastro, edição e exclusão de pontos no app. |
+| N2-5 | Validar o CRUD de doações na API. |
+| N2-6 | Cadastrar uma doação e conferir se aparece no histórico. |
+| N2-7 | Editar e excluir uma doação pelo histórico. |
+| N2-8 | Confirmar a persistência dos favoritos e apresentar o roteiro. |
 
 ## Roteiro de demonstração (até 3 minutos)
 
